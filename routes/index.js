@@ -52,7 +52,7 @@ router.get('/login', function(req, res, next) {
     if(result['result'] == 'success'){
       console.log('验证通过');
     }else{
-      console.log('验证失败');
+      console.log('验证失败: ' + result['reason']);
     }
 
   })
@@ -71,7 +71,7 @@ function hmac_sha256_encode(value, key){
 }
 
 
-// 发送post请求
+// 发送post请求, 响应json数据如：{"result": "success", "reason": "", "captcha_args": {}}
 async function post_form(datas, url){
   var result;
   var options = {
@@ -79,9 +79,19 @@ async function post_form(datas, url){
     method: "POST",
     params: datas
   };
+  try {
+    var result = await axios(options);
+  } catch (error) {
+    // geetest服务请求异常
+    console.log('服务请求异常' + error.code);
+    return {'result': 'fail', 'reason': 'server request error'}    
+  }
 
-  var result = await axios(options);
-
+  if(result.status != 200){
+    // geetest服务响应异常
+    console.log('服务响应异常, statusCode:' + result.status);
+    return {'result': 'fail', 'reason': 'server response error'}    
+  }
   return result.data;
 }
 
