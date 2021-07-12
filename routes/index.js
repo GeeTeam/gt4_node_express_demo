@@ -47,17 +47,22 @@ router.get('/login', function(req, res, next) {
 
   // post request 
   // 根据极验返回的用户验证状态, 网站主进行自己的业务逻辑  
+
   post_form(datas, API_URL).then((result)=>{
 
     if(result['result'] == 'success'){
       console.log('验证通过');
+      res.send('success');
     }else{
       console.log('验证失败: ' + result['reason']);
+      res.send('fail');
     }
-
+  }).catch((err)=>{
+    // 当请求Geetest服务接口出现异常，应放行通过，以免阻塞正常业务。
+    console.log('Geetest server error:'+err);
+    res.send('fail');
   })
 
-  res.send('ok');
 
 });
 
@@ -73,24 +78,19 @@ function hmac_sha256_encode(value, key){
 
 // 发送post请求, 响应json数据如：{"result": "success", "reason": "", "captcha_args": {}}
 async function post_form(datas, url){
-  var result;
   var options = {
     url: url,
     method: "POST",
-    params: datas
+    params: datas,
+    timeout: 5000
   };
-  try {
-    var result = await axios(options);
-  } catch (error) {
-    // geetest服务请求异常
-    console.log('服务请求异常' + error.code);
-    return {'result': 'fail', 'reason': 'server request error'}    
-  }
+  
+  var result = await axios(options);
 
   if(result.status != 200){
     // geetest服务响应异常
     console.log('服务响应异常, statusCode:' + result.status);
-    return {'result': 'fail', 'reason': 'server response error'}    
+    throw new Error('Geetest Response Error')
   }
   return result.data;
 }
