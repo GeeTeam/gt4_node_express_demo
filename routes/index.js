@@ -36,8 +36,8 @@ router.get('/login', function(req, res, next) {
   var pass_token = req.query['pass_token'];
   var gen_time = req.query['gen_time'];
 
-	// 生成签名, 使用标准的hmac算法，使用用户当前完成验证的流水号lot_number作为原始消息message，使用客户验证私钥作为key
-	// 采用sha256散列算法将message和key进行单向散列生成最终的 “sign_token” 签名
+  // 生成签名, 使用标准的hmac算法，使用用户当前完成验证的流水号lot_number作为原始消息message，使用客户验证私钥作为key
+  // 采用sha256散列算法将message和key进行单向散列生成最终的 “sign_token” 签名
   // use lot_number + CAPTCHA_KEY, generate the signature
   var sign_token = hmac_sha256_encode(lot_number, CAPTCHA_KEY);
 
