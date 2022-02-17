@@ -2,6 +2,7 @@
 1.Node.js版本: v14.17.3  
 2.启动流程:  
 ```shell
+npm install
 npm start
 ```
 3.在浏览器中访问<http://localhost:3000>即可看到demo界面  
