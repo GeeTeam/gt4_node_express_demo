@@ -66,7 +66,7 @@ router.get('/login', function(req, res, next) {
     // 当请求Geetest服务接口出现异常，应放行通过，以免阻塞正常业务。
     // When the request geetest service interface is abnormal, it shall be released to avoid blocking normal business.
     console.log('Geetest server error:'+err);
-    res.send('fail');
+    res.send('success');
   })
 
 
